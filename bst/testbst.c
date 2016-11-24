@@ -1,7 +1,7 @@
 /*
  * 2016 - Vuong Hoang <vuonghv.cs@gmail.com>
  *
- * To compile: gcc -std=c99 -o bstdemo bstdemo.c bst.c
+ * To compile: gcc -std=c99 -o testbst testbst.c bst.c
  */
 
 #include "bst.h"
@@ -28,7 +28,7 @@ void print_preorder(struct bst *root)
     if (!root)
         return;
     print_preorder(root->left);
-    printf("%4d", root->key);
+    printf("%-4d", root->key);
     print_preorder(root->right);
 }
 
@@ -37,12 +37,12 @@ int main(void)
     int arr[] = { 40, 30, 65, 25, 35, 50, 10, 28, 33, 34 };
     int arr_len = sizeof(arr)/sizeof(arr[0]);
 
-    struct bst *root;
+    struct bst *root = NULL; // Must set root to NULL
     for (int i = 0; i < arr_len; i++)
         root = bst_insert(root, arr[i]);
 
-    printf("%d => %d\n", root->key, arr_len);
     print_preorder(root);
+    printf("\n");
     assert(is_bst(root));
 
     printf("TEST: BST search\n");
@@ -81,6 +81,9 @@ int main(void)
     assert(bst_search(root, 35) == NULL);
 
     // TODO: Test delete root: bst_delete(root, 40)
+    //bst_delete(root, 40);
+    //assert(is_bst(root));
+    //assert(bst_search(root, 40) == NULL);
 
     printf("YEAH! ALL TESTS PASS!\n");
     bst_destroy(root);
