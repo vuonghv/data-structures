@@ -60,38 +60,89 @@ struct bst *bst_insert(struct bst *root, int key)
     return root;
 }
 
-static inline void replace_node(struct bst *old, struct bst *new)
+static inline void replace_child_node(struct bst *old, struct bst *new)
 {
-    if (old->parent->left == old)
-        old->parent->left = new;
-    else
-        old->parent->right = new;
+    if (old->parent) {
+        if (old->parent->left == old)
+            old->parent->left = new;
+        else
+            old->parent->right = new;
+    }
 
     if (new)
         new->parent = old->parent;
 }
 
-void bst_delete(struct bst *root, int key)
+struct bst *bst_delete(struct bst *root, int key)
 {
     struct bst *node = bst_search(root, key);
 
     if (!node)
-        return;
+        return root;
 
-    // leaf node
+    struct bst *replace_node;
+
     if (!node->left && !node->right) {
-        replace_node(node, NULL);
+        // leaf node
+        replace_child_node(node, NULL);
+        replace_node = NULL;
+
     } else if (node->left && node->right) {
         struct bst *successor = bst_successor(node);
-        replace_node(successor, successor->right);
-        replace_node(node, successor);
+        replace_child_node(successor, successor->right);
+        replace_child_node(node, successor);
+        successor->left = node->left;
+        successor->right = node->right;
+        replace_node = successor;
+
     } else if (node->left) {
-        replace_node(node, node->left);
+        // node only have left child
+        replace_child_node(node, node->left);
+        replace_node = node->left;
+
     } else {
-        replace_node(node, node->right);
+        // finnally, node only have right child
+        replace_child_node(node, node->right);
+        replace_node = node->right;
     }
 
+    if (node == root)
+        root = replace_node;
+
     free(node);
+    return root;
+}
+
+struct bst *bst_delete_recursive(struct bst *root, int key)
+{
+    if (!root)
+        return NULL;
+
+    if (key < root->key)
+        root->left = bst_delete_recursive(root->left, key);
+    else if (key > root->key)
+        root->right = bst_delete_recursive(root->right, key);
+    else { // Found key
+        struct bst *tmp = root;
+        if (root->left && root->right) {
+            // Has 2 childs
+            tmp = bst_min(root->right);
+            root->key = tmp->key;
+            root->right = bst_delete_recursive(root->right, root->key);
+        } else {
+            // Has 1 or 0 child
+            if (root->left)
+                root = root->left;
+            else if (root->right)
+                root = root->right;
+            else
+                root = NULL;
+
+            free(tmp);
+        }
+    }
+
+    return root;
 }
 
 void bst_destroy(struct bst *root)

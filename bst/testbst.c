@@ -72,18 +72,33 @@ int main(void)
     assert(bst_predcessor(node)->key == 35);
 
     printf("TEST: BST delete\n");
-    bst_delete(root, 30);
+    printf("---Original--: ");
+    print_preorder(root);
+    printf("\n");
+    //root = bst_delete(root, 30);
+    root = bst_delete_recursive(root, 30);
     assert(is_bst(root));
     assert(bst_search(root, 30) == NULL);
+    printf("[*] delete %d: ", 30);
+    print_preorder(root);
+    printf("\n");
 
-    bst_delete(root, 35);
+    //root = bst_delete(root, 35);
+    root = bst_delete_recursive(root, 35);
     assert(is_bst(root));
     assert(bst_search(root, 35) == NULL);
+    printf("[*] delete %d: ", 35);
+    print_preorder(root);
+    printf("\n");
 
-    // TODO: Test delete root: bst_delete(root, 40)
-    //bst_delete(root, 40);
-    //assert(is_bst(root));
-    //assert(bst_search(root, 40) == NULL);
+    // Test delete root
+    //root = bst_delete(root, 40);
+    root = bst_delete_recursive(root, 40);
+    assert(is_bst(root));
+    assert(bst_search(root, 40) == NULL);
+    printf("[*] delete %d: ", 40);
+    print_preorder(root);
+    printf("\n");
 
     printf("YEAH! ALL TESTS PASS!\n");
     bst_destroy(root);
