@@ -44,17 +44,48 @@ struct bst *bst_search(struct bst *root, int key)
     return root;
 }
 
-struct bst *bst_insert(struct bst *root, int key)
+struct bst *bst_insert_recursive(struct bst *root, int key)
 {
     if (!root)
         return make_node(key);
 
     if (key < root->key) {
-        root->left = bst_insert(root->left, key);
+        root->left = bst_insert_recursive(root->left, key);
         root->left->parent = root;
     } else if (key > root->key) {
-        root->right = bst_insert(root->right, key);
+        root->right = bst_insert_recursive(root->right, key);
         root->right->parent = root;
+    }
+
+    return root;
+}
+
+struct bst *bst_insert(struct bst *root, int key)
+{
+    if (!root)
+        return make_node(key);
+
+    struct bst *parent = root;
+    struct bst *child = root;
+
+    while (child && key != child->key) {
+        if (key < child->key) {
+            parent = child;
+            child = parent->left;
+        } else if (key > child->key) {
+            parent = child;
+            child = parent->right;
+        }
+    }
+
+    if (!child) {
+        struct bst *new_node = make_node(key);
+        new_node->parent = parent;
+
+        if (key < parent->key)
+            parent->left = new_node;
+        else if (key > parent->key)
+            parent->right = new_node;
     }
 
     return root;

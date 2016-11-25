@@ -27,6 +27,11 @@ struct bst *bst_search(struct bst *root, int key);
 struct bst *bst_insert(struct bst *root, int key);
 
 /*
+ * Recursive version of bst_insert()
+ */
+struct bst *bst_insert_recursive(struct bst *root, int key);
+
+/*
  * Delete and free the node has input key.
  * Return root of tree.
  */

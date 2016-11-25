@@ -10,17 +10,22 @@
 #include <stdio.h>
 
 #define BST_DELETE bst_delete
+#define BST_INSERT bst_insert
 
 bool is_bst(struct bst *root)
 {
     if (!root)
         return true;
 
-    if (root->left && root->left->key >= root->key)
-        return false;
+    if (root->left) {
+        if (root->left->key >= root->key || root->left->parent != root)
+            return false;
+    }
 
-    if (root->right && root->right->key <= root->key)
-        return false;
+    if (root->right) {
+        if (root->right->key <= root->key || root->right->parent != root)
+            return false;
+    }
 
     return is_bst(root->left) && is_bst(root->right);
 }
@@ -41,10 +46,8 @@ int main(void)
 
     struct bst *root = NULL; // Must set root to NULL
     for (int i = 0; i < arr_len; i++)
-        root = bst_insert(root, arr[i]);
+        root = BST_INSERT(root, arr[i]);
 
-    print_preorder(root);
-    printf("\n");
     assert(is_bst(root));
 
     printf("TEST: BST search\n");
