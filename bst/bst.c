@@ -75,41 +75,40 @@ static inline void replace_child_node(struct bst *old, struct bst *new)
 
 struct bst *bst_delete(struct bst *root, int key)
 {
-    struct bst *node = bst_search(root, key);
+    struct bst *del_node = bst_search(root, key);
 
-    if (!node)
+    if (!del_node)
         return root;
 
     struct bst *replace_node;
 
-    if (!node->left && !node->right) {
+    if (!del_node->left && !del_node->right) {
         // leaf node
-        replace_child_node(node, NULL);
+        replace_child_node(del_node, NULL);
         replace_node = NULL;
 
-    } else if (node->left && node->right) {
-        struct bst *successor = bst_successor(node);
+    } else if (del_node->left && del_node->right) {
+        struct bst *successor = bst_successor(del_node);
         replace_child_node(successor, successor->right);
-        replace_child_node(node, successor);
-        successor->left = node->left;
-        successor->right = node->right;
-        replace_node = successor;
+        replace_node = del_node;
+        replace_node->key = successor->key; // Move successor to node, reserve children
+        del_node = successor; // Delete old successor
 
-    } else if (node->left) {
+    } else if (del_node->left) {
         // node only have left child
-        replace_child_node(node, node->left);
-        replace_node = node->left;
+        replace_child_node(del_node, del_node->left);
+        replace_node = del_node->left;
 
     } else {
         // finnally, node only have right child
-        replace_child_node(node, node->right);
-        replace_node = node->right;
+        replace_child_node(del_node, del_node->right);
+        replace_node = del_node->right;
     }
 
-    if (node == root)
+    if (del_node == root)
         root = replace_node;
 
-    free(node);
+    free(del_node);
     return root;
 }
 

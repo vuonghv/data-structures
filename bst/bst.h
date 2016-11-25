@@ -31,6 +31,10 @@ struct bst *bst_insert(struct bst *root, int key);
  * Return root of tree.
  */
 struct bst *bst_delete(struct bst *root, int key);
+
+/*
+ * Recursive version of bst_delete
+ */
 struct bst *bst_delete_recursive(struct bst *root, int key);
 
 /*
